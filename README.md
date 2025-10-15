@@ -5,6 +5,7 @@
 - Список терминов
 - Термин по ключевому слову
 - Добавление/обновление/удаление термина
+- Управление связями между терминами (создание/список/изменение/удаление)
 
 Валидация входных данных и формирование схем — через Pydantic.
 
@@ -17,6 +18,13 @@
 - Swagger UI: `/api/docs`
 - ReDoc: `/api/redoc`
 - OpenAPI JSON: `/api/openapi.json`
+
+Типы связей:
+- `is-a` → «является»
+- `part-of` → «часть»
+- `related-to` → «связан с»
+- `synonym-of` → «синоним»
+- `derived-from` → «происходит от»
 
 Защита API — Bearer токен в заголовке `Authorization`. Исключения: `/api/docs`, `/api/redoc`, `/api/openapi.json` и preflight `OPTIONS`.
 
