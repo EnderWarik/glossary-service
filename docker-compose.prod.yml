@@ -1,0 +1,30 @@
+name: practica-sem-3
+
+services:
+  db:
+    image: postgres:16-alpine
+    env_file:
+      - backend/.env
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    env_file:
+      - backend/.env
+    depends_on:
+      - db
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  frontend:
+    build: ./frontend
+    env_file:
+      - frontend/.env
+    depends_on:
+      - backend
+    ports:
+      - "127.0.0.1:8080:80"
+
+volumes:
+  db_data:

@@ -1,0 +1,17 @@
+.idea/
+.vscode/
+__pycache__/
+.venv/
+venv/
+dist/
+build/
+node_modules/
+*.log
+.env
+.env.*
+backend/.env
+backend/.env.*
+frontend/.env
+frontend/.env.*
+frontend/dist/
+frontend/.vite/
