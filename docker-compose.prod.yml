@@ -15,7 +15,16 @@ services:
     depends_on:
       - db
     ports:
-      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:50051:50051"
+  grpcwebproxy:
+    build:
+      context: ./deploy
+      dockerfile: grpcwebproxy.Dockerfile
+    depends_on:
+      - backend
+    ports:
+      - "127.0.0.1:8081:8080"
+    command: ["/usr/local/bin/grpcwebproxy", "--backend_addr=backend:50051", "--run_tls_server=false", "--allow_all_origins"]
 
   frontend:
     build: ./frontend

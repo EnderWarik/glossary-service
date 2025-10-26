@@ -34,7 +34,7 @@ class Relation(Base):
 	id: Mapped[int] = mapped_column(primary_key=True)
 	source_id: Mapped[int] = mapped_column(ForeignKey("terms.id", ondelete="CASCADE"))
 	target_id: Mapped[int] = mapped_column(ForeignKey("terms.id", ondelete="CASCADE"))
-	type: Mapped[str] = mapped_column(String(64))  # is-a, part-of, related-to, synonym-of, derived-from
+	type: Mapped[str] = mapped_column(String(64))
 
 	source: Mapped[Term] = relationship("Term", foreign_keys=[source_id], back_populates="relations_from")
 	target: Mapped[Term] = relationship("Term", foreign_keys=[target_id], back_populates="relations_to")

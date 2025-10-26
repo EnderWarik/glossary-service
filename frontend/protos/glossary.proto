@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package glossary.v1;
+
+message Empty {}
+
+message SourceInfo {
+  string title = 1;
+  string authors = 2;
+  int32 year = 3;
+  string link = 4;
+}
+
+message Term {
+  int64 id = 1;
+  string term = 2;
+  string definition = 3;
+  repeated string synonyms = 4;
+  repeated string tags = 5;
+  SourceInfo source = 6;
+  string created_at = 7;
+  string updated_at = 8;
+}
+
+message CreateTermRequest {
+  string term = 1;
+  string definition = 2;
+  repeated string synonyms = 3;
+  repeated string tags = 4;
+  SourceInfo source = 5;
+}
+
+message UpdateTermRequest {
+  int64 id = 1;
+  optional string term = 2;
+  optional string definition = 3;
+  repeated string synonyms = 4;
+  repeated string tags = 5;
+  SourceInfo source = 6;
+}
+
+message DeleteTermRequest { int64 id = 1; }
+
+message TermByKeywordRequest { string keyword = 1; }
+
+message ListTermsRequest {
+  string query = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message ListTermsResponse { repeated Term items = 1; }
+
+message Relation {
+  int64 id = 1;
+  int64 source_id = 2;
+  int64 target_id = 3;
+  string type = 4;
+}
+
+message CreateRelationRequest {
+  int64 source_id = 1;
+  int64 target_id = 2;
+  string type = 3;
+}
+
+message UpdateRelationRequest {
+  int64 id = 1;
+  optional int64 source_id = 2;
+  optional int64 target_id = 3;
+  optional string type = 4;
+}
+
+message DeleteRelationRequest { int64 id = 1; }
+
+message ListRelationsResponse { repeated Relation items = 1; }
+
+message Graph { repeated Term nodes = 1; repeated Relation edges = 2; }
+
+service GlossaryService {
+  rpc Health(Empty) returns (Empty);
+  rpc ListTerms(ListTermsRequest) returns (ListTermsResponse);
+  rpc GetTermByKeyword(TermByKeywordRequest) returns (Term);
+  rpc CreateTerm(CreateTermRequest) returns (Term);
+  rpc UpdateTerm(UpdateTermRequest) returns (Term);
+  rpc DeleteTerm(DeleteTermRequest) returns (Empty);
+
+  rpc CreateRelation(CreateRelationRequest) returns (Relation);
+  rpc UpdateRelation(UpdateRelationRequest) returns (Relation);
+  rpc DeleteRelation(DeleteRelationRequest) returns (Empty);
+  rpc ListRelations(Empty) returns (ListRelationsResponse);
+
+  rpc GetGraph(Empty) returns (Graph);
+}
+
+
