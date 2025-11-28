@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Term {
+  id             Int      @id @default(autoincrement())
+  term           String   @unique @db.VarChar(255)
+  definition     String   @db.Text
+  synonyms       String?  @db.Text
+  tags           String?  @db.Text
+  source_title   String?  @db.VarChar(512)
+  source_authors String?  @db.VarChar(512)
+  source_year    Int?
+  source_link    String?  @db.VarChar(1024)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  relations_from Relation[] @relation("SourceTerm")
+  relations_to   Relation[] @relation("TargetTerm")
+
+  @@index([term])
+  @@map("terms")
+}
+
+model Relation {
+  id        Int    @id @default(autoincrement())
+  source_id Int
+  target_id Int
+  type      String @db.VarChar(64) // is-a, part-of, related-to, synonym-of, derived-from
+
+  source Term @relation("SourceTerm", fields: [source_id], references: [id], onDelete: Cascade)
+  target Term @relation("TargetTerm", fields: [target_id], references: [id], onDelete: Cascade)
+
+  @@map("relations")
+}

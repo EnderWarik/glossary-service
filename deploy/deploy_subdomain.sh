@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Inputs
 SSH_USER="${SSH_USER:-root}"
 SSH_HOST="${SSH_HOST:-example.com}"
 SSH_PORT="${SSH_PORT:-22}"

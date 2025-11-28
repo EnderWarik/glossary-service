@@ -1,6 +1,5 @@
 SHELL := /bin/bash
 
-.PHONY: up down build logs ps migrate fmt backend-shell
 
 up:
 	docker compose up -d --build
@@ -19,4 +18,4 @@ ps:
 	docker compose ps
 
 migrate:
-	docker compose exec backend alembic upgrade head
+	docker compose exec backend npm run prisma:migrate

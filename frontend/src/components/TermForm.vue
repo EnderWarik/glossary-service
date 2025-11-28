@@ -1,89 +1,147 @@
 <script setup lang="ts">
-import { computed, useCssModule } from 'vue'
-import type { TermCreate } from '../api'
-
-const styles = useCssModule()
+import { computed } from 'vue'
+import type { TermCreate } from '../types'
 
 const props = defineProps<{ form: TermCreate; editing: boolean; saving: boolean }>()
-const emit = defineEmits<{ (e: 'submit'): void }>()
+const emit = defineEmits<{ submit: [] }>()
 
 const synonymsText = computed({
-	get: () => (props.form.synonyms && props.form.synonyms.length ? props.form.synonyms.join(', ') : ''),
+	get: () => props.form.synonyms?.join(', ') ?? '',
 	set: (val: string) => {
-		const parts = val.split(',').map(v => v.trim()).filter(Boolean)
-		props.form.synonyms = parts.length ? parts : []
+		props.form.synonyms = val.split(',').map(v => v.trim()).filter(Boolean)
 	}
 })
 
 const tagsText = computed({
-	get: () => (props.form.tags && props.form.tags.length ? props.form.tags.join(', ') : ''),
+	get: () => props.form.tags?.join(', ') ?? '',
 	set: (val: string) => {
-		const parts = val.split(',').map(v => v.trim()).filter(Boolean)
-		props.form.tags = parts.length ? parts : []
+		props.form.tags = val.split(',').map(v => v.trim()).filter(Boolean)
 	}
 })
-
-function onSubmit() {
-	emit('submit')
-}
 </script>
 
 <template>
-	<form @submit.prevent="onSubmit" :class="styles.form">
-		<label>
-			<span>Термин</span>
-			<input :class="styles.input" v-model="props.form.term" required />
-		</label>
-		<label>
-			<span>Определение</span>
-			<textarea :class="styles.textarea" v-model="props.form.definition" rows="6" required />
-		</label>
-		<div :class="styles.row2">
-			<label>
-				<span>Синонимы</span>
-				<input :class="styles.input" v-model="synonymsText" placeholder="через запятую" />
-			</label>
-			<label>
-				<span>Теги</span>
-				<input :class="styles.input" v-model="tagsText" placeholder="через запятую" />
-			</label>
+	<div class="form-card">
+		<div class="form-header">
+			<span class="title">{{ editing ? 'Редактирование' : 'Новый термин' }}</span>
 		</div>
-		<fieldset :class="styles.fieldset">
-			<legend>Источник</legend>
-			<div :class="styles.row2">
-				<label>
-					<span>Название</span>
-					<input :class="styles.input" v-model="(props.form as any).source.title" />
+		<form class="form" @submit.prevent="emit('submit')">
+			<label class="field">
+				<span class="label">Термин</span>
+				<input class="input" v-model="props.form.term" required />
+			</label>
+			
+			<label class="field">
+				<span class="label">Определение</span>
+				<textarea class="textarea" v-model="props.form.definition" rows="3" required />
+			</label>
+			
+			<div class="row">
+				<label class="field">
+					<span class="label">Синонимы</span>
+					<input class="input" v-model="synonymsText" placeholder="через запятую" />
 				</label>
-				<label>
-					<span>Авторы</span>
-					<input :class="styles.input" v-model="(props.form as any).source.authors" />
+				<label class="field">
+					<span class="label">Теги</span>
+					<input class="input" v-model="tagsText" placeholder="через запятую" />
 				</label>
 			</div>
-			<div :class="styles.row2">
-				<label>
-					<span>Год</span>
-					<input :class="styles.input" type="number" v-model.number="(props.form as any).source.year" />
-				</label>
-				<label>
-					<span>Ссылка</span>
-					<input :class="styles.input" v-model="(props.form as any).source.link" />
-				</label>
-			</div>
-		</fieldset>
-		<button :class="[styles.btn, styles.primary]" type="submit" :disabled="props.saving">{{ props.editing ? 'Сохранить' : 'Добавить' }}</button>
-	</form>
+			
+			<fieldset class="fieldset">
+				<legend>Источник</legend>
+				<div class="row">
+					<label class="field">
+						<span class="label">Название</span>
+						<input class="input" v-model="props.form.source_title" />
+					</label>
+					<label class="field">
+						<span class="label">Авторы</span>
+						<input class="input" v-model="props.form.source_authors" />
+					</label>
+				</div>
+				<div class="row">
+					<label class="field">
+						<span class="label">Год</span>
+						<input class="input" type="number" v-model.number="props.form.source_year" />
+					</label>
+					<label class="field">
+						<span class="label">Ссылка</span>
+						<input class="input" v-model="props.form.source_link" />
+					</label>
+				</div>
+			</fieldset>
+			
+			<button class="btn btn--primary" type="submit" :disabled="saving">
+				{{ editing ? 'Сохранить' : 'Добавить' }}
+			</button>
+		</form>
+	</div>
 </template>
 
-<style module>
-.form { display:flex; flex-direction:column; gap:10px; }
-.row2 { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
-.fieldset { border:1px solid #eee; border-radius:8px; padding:10px 12px; }
-.btn { padding:8px 12px; border:1px solid #111; border-radius:8px; background:#111; color:#fff; cursor:pointer; }
-.btn:disabled { opacity:.6; cursor:not-allowed; }
-.primary { background:#111; color:#fff; border-color:#111; }
-.input { background:#fff; border:1px solid #ddd; border-radius:8px; padding:8px 10px; width:100%; }
-.textarea { background:#fff; border:1px solid #ddd; border-radius:8px; padding:8px 10px; min-height:120px; width:100%; }
+<style scoped>
+.form-card {
+	border: 1px solid var(--gray-200);
+	border-radius: var(--radius);
+}
+
+.form-header {
+	padding: 12px 16px;
+	border-bottom: 1px solid var(--gray-200);
+	background: var(--gray-50);
+}
+
+.title {
+	font-size: 13px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	color: var(--gray-600);
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 16px;
+}
+
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.label {
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--gray-600);
+}
+
+.row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 12px;
+}
+
+.fieldset {
+	border: 1px solid var(--gray-200);
+	border-radius: var(--radius);
+	padding: 12px;
+	margin: 0;
+}
+
+.fieldset legend {
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--gray-500);
+	padding: 0 6px;
+}
+
+.fieldset .row {
+	margin-top: 8px;
+}
+
+.fieldset .row:first-of-type {
+	margin-top: 0;
+}
 </style>
-
-
